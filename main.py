@@ -1,60 +1,66 @@
-import modules
+#!/usr/bin/python
+import modules, sys
 
 
 # Main function ran as the program has been called
 def main():
-	# Gives the user the option to decrypt the values or generate a new password
-	choice = str(input("Do you wish to generate the password or decrypt one? (gen/dec): "))
+	# Checks if there are multiple values to the command
+	if len(sys.argv) > 1:
+		# Password generation command part
+		if sys.argv[1] == "-gen":
+			if sys.argv[2] == "":
+				print("There is not a service name the account password is linked to")
+				exit()
+			try:
+				# Generates the password
+				password = modules.GenPassword()
+				print("Password generated successfully!")
 
-	# Prepares the user input for eval
-	choice = choice.lower()
-	choice = choice.replace(" ", "")
+				# Encrypts the password values
+				encrypted = modules.Encrypt(password)
+				print("Password encrypted successfully!")
 
-	# Checks if the user input a option that is not available
-	if not choice == "gen" and not choice == "dec": 
-		print("There is no available option like that...")
+				# Variable which is used to write to the file
+				values_to_write = sys.argv[2] + ":\n" + encrypted
+
+				# Write the values to the file
+				modules.WriteEncrypted(values_to_write, "passwords.txt")
+				print("Password has been successfully written to the file!")
+				print("Goodbye!")
+				exit()
+				
+
+			except ValueError:
+				print("There has been an error while running the program...")
+
+		# Decryption command part
+		if sys.argv[1] == "-dec":
+			if sys.argv[2] == "":
+				print("There needs to be an encrypted value appended to the command...")
+				exit()
+
+			try:
+				# User needs to input the proper encrypted values
+				encrypted = sys.argv[2]
+				# Decrypts the values user inputted
+				decrypted = modules.Decrypt(encrypted)
+
+				print("\nThe password is: ", decrypted)
+				exit()
+			except IndexError:
+				print("The encrypted values are not in the correct format...")
+				exit()
+
+		# Command usage explanation 
+		if modules.AskingHelp(sys.argv[1]):
+			print("Usage: python passgen.py [option] [extra_info]")
+			print("Option: \n \t -gen \t - Generates a random password and encrypts it")
+			print("\t -dec \t - Decrypts the inputted password value provided through [encrypted_values]")
+			print("Extra Info: \n \t For option: \n \t \t -gen \t - It requires the input of the service the account password is linked to")
+			print("\t\t -dec \t - It requires the input of the encrypted values as they are in the txt file")
+	else:
+		print("\nThe command is incomplete...")
 		exit()
-
-	# Option to generate the password
-	if choice == "gen":
-		try:
-			# Generates the password
-			password = modules.GenPassword()
-			print("Password generated successfully!")
-
-			# Encrypts the password values
-			encrypted = modules.Encrypt(password)
-			print("Password encrypted successfully!")
-
-			# Adds a label to differentiate password from themselves
-			label = str(input("What is that password connected to: "))
-
-			# Variable which is used to write to the file
-			values_to_write = label + ":\n" + encrypted
-
-			# Write the values to the file
-			modules.WriteEncrypted(values_to_write, "passwords.txt")
-			print("Password has been successfully written to the file!")
-			print("Goodbye!")
-			exit()
-			
-
-		except ValueError:
-			print("There has been an error while running the program...")
-
-
-	# Option to decrypt the password
-	if choice == "dec":
-		try:
-			# User needs to input the proper encrypted values
-			encrypted = input("Paste the encrypted values here: ")
-			# Decrypts the values user inputted
-			decrypted = modules.Decrypt(encrypted)
-
-			print(decrypted)
-		except IndexError:
-			print("The encrypted values are not in the correct format...")
-			exit()
 
 
 if __name__ == "__main__":
