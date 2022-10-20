@@ -1,17 +1,13 @@
+#!/usr/bin/python
 import random
+from string import ascii_lowercase, ascii_uppercase, digits, punctuation
 
 
 # Function used to generate a random password of 16 character long
 def GenPassword():
 
-	# All the characters the password could contain
-	lower_case = "abcdefghijklmnopqrstuvwxyz"
-	upper_case = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-	numbers = "0123456789"
-	special_characters = "!#$%&/§@€|łłŁß"
-
 	# Declares the password details
-	use_for = lower_case + upper_case + numbers + special_characters
+	use_for = ascii_lowercase + ascii_uppercase + digits + punctuation
 	pass_length = 16
 
 	# Creates the password
@@ -100,3 +96,13 @@ def WriteEncrypted(values, filename):
 		file.write("\n\n")
 		file.write(values)
 		file.close()
+
+
+def AskingHelp(res):
+	list_of_help = ['-help', '-h', '--help', '--h', '?']
+
+	for x in list_of_help:
+		if res.lower() == x:
+			return True
+
+	return False
